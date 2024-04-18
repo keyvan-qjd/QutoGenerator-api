@@ -1,19 +1,20 @@
-var qutolist =[];
-async function getQuto (){
+var quoteList =[];
+async function getQuote (){
     var response = await fetch('https://api.quotable.io/random',{method: 'GET'})
     var result = await response.json()
     printQuto(result.response)
+    quoteList.push(createQuoteTag(result.content, result.author));
+    printQuote() // Or a more informative message
 }
 
-function printQuto(response){
-    response.forEach((quto) => {
-        console.log("createNewQuto : ", createQutoTag(quto));
-    });
-    document.querySelector('body').append(...qutolist)
+function printQuote(response){
+    document.querySelector('body').append(...quoteList)
 }
 
-function createQutoTag(quto){
+function createQuoteTag(quto){
     var pTag = document.createElement('p');
     pTag.innerText = quto.response
     return pTag
 }
+
+
