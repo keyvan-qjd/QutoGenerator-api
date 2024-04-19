@@ -1,20 +1,37 @@
-var quoteList =[];
-async function getQuote (){
-    var response = await fetch('https://api.quotable.io/random',{method: 'GET'})
-    var result = await response.json()
-    printQuto(result.response)
-    quoteList.push(createQuoteTag(result.content, result.author));
-    printQuote() // Or a more informative message
-}
+const quoteText = document.querySelector('.quote-text')
+const quoteAuthor = document.querySelector('.name')
 
-function printQuote(response){
-    document.querySelector('body').append(...quoteList)
-}
+const getQuote = async () => {
+    const response = await fetch('https://api.quotable.io/random')
+    const result = await response.json()
+    quoteText.innerHTML = result.content
+    quoteAuthor.innerHTML = result.author
+    speak()
 
-function createQuoteTag(quto){
-    var pTag = document.createElement('p');
-    pTag.innerText = quto.response
-    return pTag
 }
 
 
+const speak = () => {
+    const text = quoteText.innerHTML
+    const author = quoteAuthor.innerHTML
+
+    const contentUtterance = new SpeechSynthesisUtterance(text)
+    const authorUtterance = new SpeechSynthesisUtterance(author)
+
+
+    const voices = speechSynthesis.getVoices()
+    contentUtterance.voice = voices[0]
+    authorUtterance.voice = voices[0]
+    speechSynthesis.speak(contentUtterance, authorUtterance)
+}
+
+async function copyContent() {
+    try {
+      await navigator.clipboard.writeText(quoteText.innerHTML);
+      console.log('Content copied to clipboard');
+      /* Resolved - text copied to clipboard successfully */
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+      /* Rejected - text failed to copy to the clipboard */
+    }
+  }
